@@ -15,7 +15,7 @@
 
   <ItemGroup>
     <Reference Include="Zennolab.CapMonsterCloud.Client">
-      <HintPath>..\..\..\Documents\GitHub\capmonstercloud-client-dotnet\CapMonsterCloud.Client\bin\Debug\netstandard2.1\Zennolab.CapMonsterCloud.Client.dll</HintPath>
+      <HintPath>..\..\capmonstercloud-client-dotnet\CapMonsterCloud.Client\bin\Debug\netstandard2.1\Zennolab.CapMonsterCloud.Client.dll</HintPath>
     </Reference>
   </ItemGroup>
 
