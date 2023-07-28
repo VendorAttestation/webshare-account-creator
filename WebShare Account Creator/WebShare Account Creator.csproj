@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net7.0</TargetFramework>
+    <RootNamespace>WebShare_Account_Creator</RootNamespace>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Bogus" Version="34.0.2" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Zennolab.CapMonsterCloud.Client">
+      <HintPath>..\..\..\Documents\GitHub\capmonstercloud-client-dotnet\CapMonsterCloud.Client\bin\Debug\netstandard2.1\Zennolab.CapMonsterCloud.Client.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>
