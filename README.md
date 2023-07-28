@@ -1,2 +1,9 @@
-# webshare-account-creator
-Create unlimited webshare accs 1GB accounts at 0.06 cents perk 1k using capmonster.cloud
+# Webshare Account Creator
+Create unlimited webshare 1GB accounts at 0.04 cents per 1k using capmonster.cloud
+
+![image](https://github.com/TheVisual/webshare-account-creator/assets/132447890/c44a6e1f-a4a9-43d5-a70c-bb958d95d1d3)
+
+
+# Requirements (Build from source and add as reference)
+- https://github.com/TheVisual/capmonstercloud-client-dotnet
+
