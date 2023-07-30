@@ -6,8 +6,6 @@ using Zennolab.CapMonsterCloud.Requests;
 
 public static class MethodsExensions
 {
-    private static HttpClient client = new HttpClient(new HttpClientHandler { AutomaticDecompression = DecompressionMethods.All });
-
     private static readonly object fileWriteLock = new object();
     public static async Task<string> SolveCaptcha()
     {
@@ -39,6 +37,7 @@ public static class MethodsExensions
 
     public static async Task<string> Register(string capKey)
     {
+        using var client = new HttpClient(new HttpClientHandler { AutomaticDecompression = DecompressionMethods.All, Proxy = new WebProxy("YOURPROXYHERE") });
         client.DefaultRequestHeaders.Clear();
         client.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36");
         client.DefaultRequestHeaders.TryAddWithoutValidation("Accept", "application/json, text/plain, */*");
@@ -92,6 +91,7 @@ public static class MethodsExensions
     {
         try
         {
+            using var client = new HttpClient(new HttpClientHandler { AutomaticDecompression = DecompressionMethods.All, Proxy = new WebProxy("YOURPROXYHERE") });
             client.DefaultRequestHeaders.Clear();
             client.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", $"Token {authToken}");
             client.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36");
