@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -15,7 +15,7 @@
 
   <ItemGroup>
     <Reference Include="Zennolab.CapMonsterCloud.Client">
-      <HintPath>..\..\capmonstercloud-client-dotnet\CapMonsterCloud.Client\bin\Debug\netstandard2.1\Zennolab.CapMonsterCloud.Client.dll</HintPath>
+      <HintPath>..\..\capmonstercloud-client-dotnet\CapMonsterCloud.Client\bin\Debug\netstandard2.0\Zennolab.CapMonsterCloud.Client.dll</HintPath>
     </Reference>
   </ItemGroup>
 

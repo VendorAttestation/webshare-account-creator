@@ -7,6 +7,9 @@ using Zennolab.CapMonsterCloud.Requests;
 public static class MethodsExensions
 {
     private static readonly object fileWriteLock = new object();
+    private static int ProxyIndex = 0;
+    private static string[] Proxies = File.ReadAllLines("proxies.txt");
+    private static string UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36";
     public static async Task<string> SolveCaptcha()
     {
 
@@ -19,7 +22,7 @@ public static class MethodsExensions
         {
             WebsiteUrl = "https://proxy2.webshare.io/",
             WebsiteKey = "6LeHZ6UUAAAAAKat_YS--O2tj_by3gv3r_l03j9d",
-            UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36",
+            UserAgent = UserAgent,
         };
 
         var recaptchaV2Result = await cmCloudClient.SolveAsync(recaptchaV2Request);
@@ -35,11 +38,79 @@ public static class MethodsExensions
         }
     }
 
+
+    private static readonly object ProxiesLock = new object();
+
+    private static string GetNextProxy()
+    {
+        string proxy;
+
+        lock (ProxiesLock)
+        {
+            if (ProxyIndex >= Proxies.Count())
+            {
+                throw new InvalidOperationException("No Proxies");
+            }
+
+            proxy = Proxies[ProxyIndex];
+        }
+
+        Interlocked.Increment(ref ProxyIndex);
+
+        return proxy;
+    }
+    private static WebProxy CreateProxyWithCredentials(string[] proxyComponents)
+    {
+        string host = proxyComponents[0];
+        int port = int.Parse(proxyComponents[1]);
+        string username = proxyComponents[2];
+        string password = proxyComponents[3];
+
+        ICredentials credentials = new NetworkCredential(username, password);
+        var proxyUri = new Uri($"http://{host}:{port}");
+
+        return new WebProxy(proxyUri, false, null, credentials);
+    }
+
+    public static WebProxy GetProxy()
+    {
+        try
+        {
+            string proxy = GetNextProxy();
+
+            string[] proxyComponents = proxy.Split(':');
+
+            WebProxy webProxy;
+
+            switch (proxyComponents.Length)
+            {
+                case 2:
+                    string host = proxyComponents[0];
+                    int port = int.Parse(proxyComponents[1]);
+
+                    webProxy = new WebProxy(host, port);
+                    break;
+                case 4:
+                    webProxy = CreateProxyWithCredentials(proxyComponents);
+                    break;
+                default:
+                    throw new ArgumentException("Invalid proxy format.");
+            }
+
+            return webProxy;
+        }
+        catch (Exception)
+        {
+            throw;
+        }
+    }
+
+
     public static async Task<string> Register(string capKey)
     {
-        using var client = new HttpClient(new HttpClientHandler { AutomaticDecompression = DecompressionMethods.All, Proxy = new WebProxy("YOURPROXYHERE") });
+        using var client = new HttpClient(new HttpClientHandler { AutomaticDecompression = DecompressionMethods.All, Proxy = GetProxy() });
         client.DefaultRequestHeaders.Clear();
-        client.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36");
+        client.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", UserAgent);
         client.DefaultRequestHeaders.TryAddWithoutValidation("Accept", "application/json, text/plain, */*");
         client.DefaultRequestHeaders.TryAddWithoutValidation("Accept-Language", "en-US,en;q=0.5");
         client.DefaultRequestHeaders.TryAddWithoutValidation("Accept-Encoding", "gzip, deflate, br");
@@ -91,10 +162,10 @@ public static class MethodsExensions
     {
         try
         {
-            using var client = new HttpClient(new HttpClientHandler { AutomaticDecompression = DecompressionMethods.All, Proxy = new WebProxy("YOURPROXYHERE") });
+            using var client = new HttpClient(new HttpClientHandler { AutomaticDecompression = DecompressionMethods.All, Proxy = GetProxy() });
             client.DefaultRequestHeaders.Clear();
             client.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", $"Token {authToken}");
-            client.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36");
+            client.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", UserAgent);
 
             var rotatingResponse = await client.GetAsync("https://proxy.webshare.io/api/v2/proxy/config/");
             rotatingResponse.EnsureSuccessStatusCode();
@@ -119,7 +190,7 @@ public static class MethodsExensions
 
             client.DefaultRequestHeaders.Clear();
             client.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", $"Token {authToken}");
-            client.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36");
+            client.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", UserAgent);
 
             var staticResponse = await client.GetAsync("https://proxy.webshare.io/api/v2/proxy/list/?mode=direct&page=1&page_size=10");
             staticResponse.EnsureSuccessStatusCode();
