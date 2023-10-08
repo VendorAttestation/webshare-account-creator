@@ -5,5 +5,5 @@ Create unlimited webshare 1GB accounts at 0.04 cents per 1k using capmonster.clo
 
 
 # Requirements (Build from source and add as reference)
-- https://github.com/TheVisual/capmonstercloud-client-dotnet
+- https://github.com/ZennoLab/capmonstercloud-client-dotnet
 
